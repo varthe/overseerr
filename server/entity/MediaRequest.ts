@@ -357,6 +357,7 @@ export class MediaRequest {
                 : MediaRequestStatus.PENDING,
             })
         ),
+        seriesType: requestBody.seriesType,
         isAutoRequest: options.isAutoRequest ?? false,
       });
 
@@ -454,6 +455,9 @@ export class MediaRequest {
     },
   })
   public tags?: number[];
+
+  @Column({ nullable: true })
+  public seriesType: 'standard' | 'anime' | 'daily'
 
   @Column({ default: false })
   public isAutoRequest: boolean;
@@ -974,10 +978,13 @@ export class MediaRequest {
           throw new Error('TVDB ID not found');
         }
 
-        let seriesType: SonarrSeries['seriesType'] = 'standard';
+        let seriesType: SonarrSeries['seriesType'] = this.seriesType || 'standard';
 
         // Change series type to anime if the anime keyword is present on tmdb
+        console.log("I AM A PRETTY TEST LOG :3")
+        console.log(`Series type: ${seriesType}`)
         if (
+          !this.seriesType &&
           series.keywords.results.some(
             (keyword) => keyword.id === ANIME_KEYWORD_ID
           )
